@@ -14,7 +14,7 @@ defmodule Proxy.Mixfile do
   def application do
     [
       mod: { Proxy, [] },
-      applications: [:cowboy, :ranch]
+      applications: [:cowboy, :ranch, :httpoison]
     ]
   end
 
@@ -29,6 +29,7 @@ defmodule Proxy.Mixfile do
   # Type `mix help deps` for more examples and options
   defp deps do
     [ { :cowboy, github: "ninenines/cowboy", tag: "2.0.0-pre.3" },
+      {:httpoison, "~> 0.10.0"},
       { :jsex, "~> 2.0.0" } ]
   end
 end
