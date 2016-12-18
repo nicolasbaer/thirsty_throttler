@@ -68,13 +68,22 @@ defmodule DynamicPageHandler do
     :ok
   end
 
+def sess_id(h) do 
+  case h do 
+    {"sessionid", _} -> true 
+    _ -> false 
+  end
+end  
 
   @doc """
   Assemble the body of a response in HTML.
   """
   def build_body(request) do
+    headers = :cowboy_req.headers(request) 
+    sessionId = Enum.find(headers, nil, &sess_id/1) 
+
     HTTPoison.start
-    url = "https://www.unic.com/de.html"
+    url = "localhost:8081"
     case HTTPoison.get(url) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         body
