@@ -17,7 +17,7 @@ defmodule Proxy.ProxyHandler do
   def serve_error(request, state) do
       req = :cowboy_req.reply(
       500,
-      [ {"content-type", "text/html"} ],
+      [ {"content-type", "text/html"}, {"sessionid", session_id}],
       "not good..",
       request
     )
