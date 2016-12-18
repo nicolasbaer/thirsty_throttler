@@ -60,7 +60,7 @@ defmodule Proxy do
         # previous specification.  The list takes the form of tuples, each one
         # being { PathMatch, Handler, Options}
         [
-          {"/[...]", DynamicPageHandler, []}
+          {"/[...]", Proxy.ProxyHandler, []}
       ]}
     ])
   end
