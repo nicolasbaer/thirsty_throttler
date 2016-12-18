@@ -1,6 +1,6 @@
 defmodule Proxy.ProxyHandler do
 
-  def cache_size do 1000 end
+  def cache_size do 10 end
 
   def init(req, state) do
     handle(req, state)
