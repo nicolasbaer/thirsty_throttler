@@ -26,7 +26,10 @@ defmodule Proxy.ProxyHandler do
 
   def handle(request, state) do
 
-    case Throttler.Random.throttle nil do
+    headers = :cowboy_req.headers(request) 
+    sessionId = Enum.find(headers, nil, &sess_id/1) |> elem(1)
+
+    case Throttler.LRU.throttle sessionId do
       true -> serve_error request, state
       false -> serve_proxy request, state
     end
@@ -44,8 +47,7 @@ defmodule Proxy.ProxyHandler do
   end  
 
   def build_body(request) do
-    #headers = :cowboy_req.headers(request) 
-    #sessionId = Enum.find(headers, nil, &sess_id/1) |> elem(1)
+
     path = :cowboy_req.path(request) 
 
     HTTPoison.start

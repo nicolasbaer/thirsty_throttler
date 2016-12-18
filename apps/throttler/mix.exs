@@ -18,7 +18,7 @@ defmodule Throttler.Mixfile do
   #
   # Type "mix help compile.app" for more information
   def application do
-    [applications: [:logger],
+    [applications: [:logger, :lru_cache],
      mod: {Throttler, []}]
   end
 
@@ -36,6 +36,6 @@ defmodule Throttler.Mixfile do
   #
   # Type "mix help deps" for more examples and options
   defp deps do
-    []
+    [{:lru_cache, "~> 0.1.0"}]
   end
 end

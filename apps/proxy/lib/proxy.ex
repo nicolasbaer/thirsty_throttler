@@ -19,6 +19,9 @@ defmodule Proxy do
   SEE ALSO: http://ninenines.eu/docs/en/cowboy/1.0/guide/getting_started/
   """
   def start(_type, _args) do
+    LruCache.start_link(:sessions, 3)
+
+
     dispatch_config = build_dispatch_config
     { :ok, _ } = :cowboy.start_http(:http,
                                     100,
