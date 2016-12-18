@@ -19,6 +19,26 @@ defmodule DynamicPageHandler do
     handle(req, state)
   end
 
+  def serve_proxy(request, state) do
+     req = :cowboy_req.reply(
+      200,
+      [ {"content-type", "text/html"} ],
+      build_body(request),
+      request
+    )
+    {:ok, req, state}
+  end
+
+  def serve_error(request, state) do
+      req = :cowboy_req.reply(
+      500,
+      [ {"content-type", "text/html"} ],
+      "not good..",
+      request
+    )
+    {:ok, req, state}
+  end
+
   @doc """
   Handle a single HTTP request.
 
@@ -34,24 +54,11 @@ defmodule DynamicPageHandler do
     #   * A list of 2-tuples representing headers
     #   * The body of the response
     #   * The original request
-    req = :cowboy_req.reply(
 
-      # status code
-      500,
-
-      # headers
-      [ {"content-type", "text/html"} ],
-
-      # body of reply.
-      build_body(request),
-
-      # original request
-      request
-    )
-
-    # handle/2 returns a tuple starting containing :ok, the reply, and the
-    # current state of the handler.
-    {:ok, req, state}
+    case Throttler.Random.throttle nil do
+      true -> serve_error request, state
+      false -> serve_proxy request, state
+    end
   end
 
 
@@ -68,6 +75,7 @@ defmodule DynamicPageHandler do
     :ok
   end
 
+
 def sess_id(h) do 
   case h do 
     {"sessionid", _} -> true 
@@ -80,10 +88,13 @@ end
   """
   def build_body(request) do
     headers = :cowboy_req.headers(request) 
-    sessionId = Enum.find(headers, nil, &sess_id/1) |> elem(1)
+    IO.inspect headers
+    #sessionId = Enum.find(headers, nil, &sess_id/1) |> elem(1)
+
+    path = :cowboy_req.path(request) 
 
     HTTPoison.start
-    url = "localhost:8081"
+    url = "localhost:8081" <> path
     case HTTPoison.get(url) do
       {:ok, %HTTPoison.Response{status_code: 200, body: body}} ->
         body

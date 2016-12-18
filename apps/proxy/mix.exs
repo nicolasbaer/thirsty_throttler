@@ -30,6 +30,8 @@ defmodule Proxy.Mixfile do
   defp deps do
     [ { :cowboy, github: "ninenines/cowboy", tag: "2.0.0-pre.3" },
       {:httpoison, "~> 0.10.0"},
-      { :jsex, "~> 2.0.0" } ]
+      { :jsex, "~> 2.0.0" },
+      {:throttler, in_umbrella: true}
+    ]
   end
 end

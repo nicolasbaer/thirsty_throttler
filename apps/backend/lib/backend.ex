@@ -22,7 +22,7 @@ defmodule Backend do
     dispatch_config = build_dispatch_config
     { :ok, _ } = :cowboy.start_http(:http,
                                     100,
-                                   [{:port, 8080}],
+                                   [{:port, 8081}],
                                    [{ :env, [{:dispatch, dispatch_config}]}]
                                    )
 
@@ -71,7 +71,7 @@ defmodule Backend do
           #   :cowboy_elixir_example -- application name.  This is used to search for
           #                             the path that priv/ exists in.
           #   "index.html            -- filename to serve
-          {"/", :cowboy_static, {:priv_file, :cowboy_elixir_example, "index.html"}},
+          {"/", :cowboy_static, {:priv_file, :backend, "index.html"}},
 
 
           # Serve all static files in a directory.
