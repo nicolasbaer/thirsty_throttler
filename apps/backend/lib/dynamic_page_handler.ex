@@ -34,7 +34,7 @@ defmodule DynamicPageHandler do
     #   * A list of 2-tuples representing headers
     #   * The body of the response
     #   * The original request
-    req0 = :cowboy_req.reply(
+    req = :cowboy_req.reply(
 
       # status code
       200,
@@ -48,9 +48,6 @@ defmodule DynamicPageHandler do
       # original request
       request
     )
-
-    session_id = "thiz iz session"
-    req = :cowboy_req.set_resp_cookie("sessionid", session_id, [], req0)
 
     # handle/2 returns a tuple starting containing :ok, the reply, and the
     # current state of the handler.
