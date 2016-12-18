@@ -4,10 +4,10 @@ defmodule Proxy.ProxyHandler do
     handle(req, state)
   end
 
-  def serve_proxy(request, state) do
+  def serve_proxy(request, state, session_id) do
      req = :cowboy_req.reply(
       200,
-      [ {"content-type", "text/html"} ],
+      [ {"content-type", "text/html"}, {"sessionid", session_id}],
       build_body(request),
       request
     )
@@ -27,11 +27,14 @@ defmodule Proxy.ProxyHandler do
   def handle(request, state) do
 
     headers = :cowboy_req.headers(request) 
-    sessionId = Enum.find(headers, nil, &sess_id/1) |> elem(1)
+    session_id = case Enum.find(headers, nil, &sess_id/1) do
+      nil -> Integer.to_string(:rand.uniform(1000000))
+      x -> elem(x, 1)
+    end
 
-    case Throttler.LRU.throttle sessionId do
+    case Throttler.LRU.throttle session_id do
       true -> serve_error request, state
-      false -> serve_proxy request, state
+      false -> serve_proxy request, state, session_id
     end
   end
 
