@@ -80,7 +80,7 @@ end
   """
   def build_body(request) do
     headers = :cowboy_req.headers(request) 
-    sessionId = Enum.find(headers, nil, &sess_id/1) 
+    sessionId = Enum.find(headers, nil, &sess_id/1) |> elem(1)
 
     HTTPoison.start
     url = "localhost:8081"
