@@ -1,5 +1,7 @@
 defmodule Proxy.ProxyHandler do
 
+  def cache_size do 1000 end
+
   def init(req, state) do
     handle(req, state)
   end
@@ -14,7 +16,7 @@ defmodule Proxy.ProxyHandler do
     {:ok, req, state}
   end
 
-  def serve_error(request, state) do
+  def serve_error(request, state, session_id) do
       req = :cowboy_req.reply(
       500,
       [ {"content-type", "text/html"}, {"sessionid", session_id}],
@@ -32,8 +34,8 @@ defmodule Proxy.ProxyHandler do
       x -> elem(x, 1)
     end
 
-    case Throttler.LRU.throttle session_id do
-      true -> serve_error request, state
+    case Throttler.LRU.throttle session_id, cache_size do
+      true -> serve_error request, state, session_id
       false -> serve_proxy request, state, session_id
     end
   end
