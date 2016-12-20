@@ -49,6 +49,7 @@ defmodule TCPProxy do
 
   def filter(data) do
     case data do
+      :closed -> data
       _       ->  {:ok, packet, rest} = :erlang.decode_packet(:http, data, [])
                   case packet do
                     {:http_request, _, _, _}  ->  Logger.info "possible filter on http request #{inspect packet} #{inspect rest}"
@@ -57,15 +58,14 @@ defmodule TCPProxy do
                                                   data
                     _ -> data
                   end
-      :closed -> data
     end
   end
 
   def send_packet(data, remote) do
     case data do
-      _       ->  :gen_tcp.send(remote, data)
       :closed ->  :gen_tcp.close(remote)
                   :closed
+      _       ->  :gen_tcp.send(remote, data)
     end
   end
 
